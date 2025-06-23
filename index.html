@@ -1,0 +1,2666 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metaquant Studio | Empresa Especializada en Programación MT4/MT5 | Expert Advisors e Indicadores</title>
+    <meta name="description" content="Metaquant Studio - Empresa especializada en programación MT4/MT5. Desarrollo profesional de Expert Advisors, indicadores personalizados, scripts y algoritmos de trading. +5 años en el mercado.">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bull-green: #00c851;
+            --bear-red: #ff4444;
+            --chart-blue: #1976d2;
+            --gold-accent: #ffc107;
+            --dark-bg: #0d1421;
+            --darker-bg: #070b14;
+            --card-bg: #1a2332;
+            --text-primary: #ffffff;
+            --text-secondary: #b0bec5;
+            --text-muted: #78909c;
+            --border-color: #263238;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --info: #2196f3;
+            
+            /* Futuristic accents - Level 5/10 */
+            --neon-blue: #00d4ff;
+            --neon-purple: #8b5cf6;
+            --neon-cyan: #06b6d4;
+            --futuristic-glow: 0 0 20px rgba(0, 212, 255, 0.3);
+            --futuristic-border: 1px solid rgba(0, 212, 255, 0.2);
+            --futuristic-gradient: linear-gradient(135deg, #0d1421 0%, #1a2332 50%, #2d3748 100%);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--dark-bg);
+            overflow-x: hidden;
+        }
+        
+        /* Trading Terminal Style Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--darker-bg);
+            border-left: 1px solid var(--border-color);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, var(--bull-green), var(--chart-blue));
+            border-radius: 6px;
+            border: 2px solid var(--darker-bg);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, var(--chart-blue), var(--gold-accent));
+        }
+        
+        /* Trading Terminal Header */
+        .trading-header {
+            position: fixed;
+            top: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(13, 20, 33, 0.95);
+            backdrop-filter: blur(10px);
+            border: var(--futuristic-border);
+            border-radius: 0 0 0 10px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: var(--futuristic-glow);
+        }
+        
+        .market-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 12px;
+            color: var(--neon-blue);
+            text-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--neon-blue);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.6);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .lang-switcher {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .lang-btn {
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 11px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .lang-btn:hover {
+            border-color: var(--chart-blue);
+            color: var(--chart-blue);
+        }
+        
+        .lang-btn.active {
+            background: var(--chart-blue);
+            color: white;
+            border-color: var(--chart-blue);
+        }
+        
+        /* Content Language Control */
+        .content[data-lang]:not([data-lang="es"]) { display: none; }
+        .content[data-lang="es"] { display: block; }
+        
+        body.lang-en .content[data-lang]:not([data-lang="en"]) { display: none; }
+        body.lang-en .content[data-lang="en"] { display: block; }
+        
+        /* Hero Section with Trading Chart Feel */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 50%, #1a237e 100%);
+            position: relative;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(90deg, transparent 0%, rgba(0, 200, 81, 0.03) 50%, transparent 100%),
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 50px,
+                    rgba(255, 255, 255, 0.01) 51px,
+                    rgba(255, 255, 255, 0.01) 52px
+                );
+            animation: marketFlow 20s linear infinite;
+        }
+        
+        @keyframes marketFlow {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(100px); }
+        }
+        
+        .hero-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 100px 30px 50px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .hero-content h1 {
+            font-size: 3.5em;
+            font-weight: 900;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, var(--text-primary), var(--neon-blue), var(--bull-green));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 4s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        /* Trading Logo Terminal */
+        .trading-logo {
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .logo-terminal {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .logo-terminal:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            border-color: var(--bull-green);
+        }
+        
+        .terminal-header {
+            background: var(--darker-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .terminal-dots {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .dot.red { background: #ff5f56; }
+        .dot.yellow { background: #ffbd2e; }
+        .dot.green { background: #27ca3f; }
+        
+        .terminal-title {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9em;
+            color: var(--text-muted);
+        }
+        
+        .terminal-body {
+            padding: 25px 20px;
+        }
+        
+        .code-line {
+            font-family: 'Roboto Mono', monospace;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        
+        .prompt {
+            color: var(--bull-green);
+            margin-right: 8px;
+        }
+        
+        .command {
+            color: var(--chart-blue);
+            font-weight: 600;
+        }
+        
+        .flag {
+            color: var(--gold-accent);
+            margin-left: 8px;
+        }
+        
+        .brand-display {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .brand-main {
+            font-family: 'Roboto', sans-serif;
+            font-size: 2.2em;
+            font-weight: 900;
+            color: var(--text-primary);
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            background: linear-gradient(45deg, var(--bull-green), var(--chart-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .brand-sub {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9em;
+            color: var(--text-muted);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+        
+        .terminal-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .stat-item {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.75em;
+            color: var(--text-muted);
+            padding: 4px 8px;
+            background: rgba(25, 118, 210, 0.1);
+            border-radius: 3px;
+            border: 1px solid rgba(25, 118, 210, 0.3);
+        }
+
+        .company-badge {
+            display: inline-block;
+            background: rgba(0, 200, 81, 0.1);
+            border: 1px solid var(--bull-green);
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.85em;
+            color: var(--bull-green);
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .hero-content .subtitle {
+            font-size: 1.2em;
+            color: var(--text-secondary);
+            margin-bottom: 35px;
+            line-height: 1.7;
+        }
+        
+        .cta-trading {
+            background: linear-gradient(45deg, var(--bull-green), var(--neon-blue));
+            color: white;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: var(--futuristic-glow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-trading::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .cta-trading:hover::before {
+            left: 100%;
+        }
+        
+        .cta-trading:hover {
+            background: linear-gradient(45deg, var(--neon-blue), var(--bull-green));
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+        }
+        
+        /* Trading Chart Visual */
+        .chart-visual {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            position: relative;
+            height: 260px;
+            overflow: hidden;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .chart-title {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.1em;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chart-title::before {
+            content: '</>';
+            color: var(--chart-blue);
+            font-weight: bold;
+        }
+        
+        .chart-price {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.2em;
+            color: var(--bull-green);
+            font-weight: 600;
+        }
+        
+        .chart-container {
+            height: 180px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            padding: 20px 0;
+        }
+        
+        .candlestick {
+            width: 12px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .wick-high {
+            width: 1px;
+            background: var(--text-muted);
+            margin-bottom: 2px;
+        }
+        
+        .body {
+            width: 12px;
+            border-radius: 1px;
+            position: relative;
+        }
+        
+        .body.bullish {
+            background: var(--bull-green);
+            border: 1px solid var(--bull-green);
+        }
+        
+        .body.bearish {
+            background: var(--bear-red);
+            border: 1px solid var(--bear-red);
+        }
+        
+        .wick-low {
+            width: 1px;
+            background: var(--text-muted);
+            margin-top: 2px;
+        }
+        
+        /* Create animated candlesticks */
+        .candlestick:nth-child(1) .wick-high { height: 8px; }
+        .candlestick:nth-child(1) .body { height: 25px; }
+        .candlestick:nth-child(1) .wick-low { height: 5px; }
+        
+        .candlestick:nth-child(2) .wick-high { height: 12px; }
+        .candlestick:nth-child(2) .body { height: 35px; }
+        .candlestick:nth-child(2) .wick-low { height: 8px; }
+        
+        .candlestick:nth-child(3) .wick-high { height: 6px; }
+        .candlestick:nth-child(3) .body { height: 40px; }
+        .candlestick:nth-child(3) .wick-low { height: 4px; }
+        
+        .candlestick:nth-child(4) .wick-high { height: 15px; }
+        .candlestick:nth-child(4) .body { height: 28px; }
+        .candlestick:nth-child(4) .wick-low { height: 10px; }
+        
+        .candlestick:nth-child(5) .wick-high { height: 10px; }
+        .candlestick:nth-child(5) .body { height: 45px; }
+        .candlestick:nth-child(5) .wick-low { height: 6px; }
+        
+        .candlestick:nth-child(6) .wick-high { height: 5px; }
+        .candlestick:nth-child(6) .body { height: 32px; }
+        .candlestick:nth-child(6) .wick-low { height: 8px; }
+        
+        .candlestick:nth-child(7) .wick-high { height: 18px; }
+        .candlestick:nth-child(7) .body { height: 38px; }
+        .candlestick:nth-child(7) .wick-low { height: 7px; }
+        
+        .candlestick:nth-child(8) .wick-high { height: 8px; }
+        .candlestick:nth-child(8) .body { height: 50px; }
+        .candlestick:nth-child(8) .wick-low { height: 4px; }
+        
+        /* Add trend line */
+        .trend-line {
+            position: absolute;
+            top: 30%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(45deg, transparent, var(--chart-blue), transparent);
+            transform: rotate(8deg);
+            opacity: 0.7;
+            animation: trendGlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes trendGlow {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+        
+        /* Section Styling */
+        .section {
+            padding: 80px 0;
+            position: relative;
+        }
+        
+        .section:nth-child(even) {
+            background: rgba(26, 35, 50, 0.3);
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-title {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--chart-blue), var(--bull-green));
+        }
+        
+        .section-subtitle {
+            font-size: 1.1em;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        /* About Section */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+        
+        .about-content h3 {
+            font-size: 2em;
+            color: var(--chart-blue);
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .about-content p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+        
+        .about-visual {
+            background: linear-gradient(135deg, #18243a 60%, #1976d2 100%);
+            border: 1.5px solid #22304a;
+            border-radius: 10px;
+            padding: 18px 12px;
+            text-align: center;
+            min-width: 0;
+            max-width: 260px;
+            margin: 0 auto;
+            box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .about-icon {
+            font-size: 4em;
+            color: var(--bull-green);
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Trading Stats */
+        .trading-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border: var(--futuristic-border);
+            border-radius: 8px;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--bull-green));
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-blue);
+            box-shadow: var(--futuristic-glow);
+        }
+        
+        .stat-number {
+            font-family: 'Roboto Mono', monospace;
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--bull-green);
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Services Grid */
+        .services-terminal {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 50px;
+        }
+        
+        .service-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .service-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--chart-blue), var(--bull-green), var(--gold-accent));
+            background-size: 200% 100%;
+            animation: borderFlow 3s linear infinite;
+        }
+        
+        @keyframes borderFlow {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        .service-panel:hover {
+            transform: translateY(-5px);
+            border-color: var(--chart-blue);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+        
+        .service-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .service-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, var(--chart-blue), var(--bull-green));
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+        }
+        
+        .service-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: 'Roboto Mono', monospace;
+        }
+        
+        .service-body {
+            padding: 20px;
+        }
+        
+        .service-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+        
+        /* Process Timeline */
+        .process-timeline {
+            position: relative;
+            margin-top: 50px;
+        }
+        
+        .process-timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--chart-blue), var(--bull-green));
+            transform: translateX(-50%);
+        }
+        
+        .process-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+        
+        .process-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+        
+        .process-number {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background: var(--card-bg);
+            border: 3px solid var(--chart-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--chart-blue);
+            z-index: 2;
+        }
+        
+        .process-content {
+            width: 45%;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 25px;
+        }
+        
+        .process-content h4 {
+            font-size: 1.3em;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .process-content p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        /* Portfolio Showcase */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .project-terminal {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+        
+        .project-terminal:hover {
+            transform: translateY(-8px);
+            border-color: var(--bull-green);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .project-display {
+            height: 200px;
+            background: linear-gradient(135deg, var(--dark-bg), var(--chart-blue));
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
+            overflow: hidden;
+        }
+        
+        .project-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.05) 42px),
+                repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.05) 42px);
+            animation: terminalGrid 15s linear infinite;
+        }
+        
+        @keyframes terminalBoot {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            50% {
+                opacity: 0.8;
+                transform: translateY(-5px) scale(1.02);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        @keyframes terminalType {
+            0% { width: 0; }
+            100% { width: 100%; }
+        }
+        
+        .logo-terminal {
+            animation: terminalBoot 1.5s ease-out;
+        }
+        
+        .code-line {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .code-line::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--bull-green);
+            animation: blink 1.5s infinite;
+        }
+        
+        .loading-dots {
+            color: var(--text-muted);
+            font-family: 'Roboto Mono', monospace;
+            margin: 10px 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .loading-dots.active {
+            opacity: 1;
+        }
+        
+        .loading-dots::after {
+            content: '...';
+            animation: loadingDots 1.5s infinite;
+        }
+        
+        @keyframes loadingDots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        .brand-main {
+            animation: brandGlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes brandGlow {
+            0%, 100% { 
+                text-shadow: 0 0 10px rgba(0, 200, 81, 0.3);
+            }
+            50% { 
+                text-shadow: 0 0 20px rgba(25, 118, 210, 0.5);
+            }
+        }
+        
+        .project-info {
+            padding: 25px;
+        }
+        
+        .project-info h4 {
+            font-size: 1.3em;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .project-info p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+        
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .project-tag {
+            background: rgba(25, 118, 210, 0.1);
+            color: var(--chart-blue);
+            padding: 4px 10px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            font-family: 'Roboto Mono', monospace;
+            border: 1px solid rgba(25, 118, 210, 0.3);
+        }
+        
+        /* Testimonials */
+        .testimonials {
+            background: var(--darker-bg);
+        }
+        
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .testimonial-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 30px;
+            position: relative;
+        }
+        
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            font-size: 3em;
+            color: var(--chart-blue);
+            opacity: 0.3;
+        }
+        
+        .testimonial-text {
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-style: italic;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .author-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(45deg, var(--chart-blue), var(--bull-green));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-family: 'Roboto Mono', monospace;
+        }
+        
+        .author-info h5 {
+            color: var(--text-primary);
+            margin-bottom: 3px;
+            font-weight: 500;
+        }
+        
+        .author-info span {
+            color: var(--text-muted);
+            font-size: 0.9em;
+        }
+        
+        /* Guarantees */
+        .guarantees-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+        
+        .guarantee-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 30px 25px;
+            text-align: center;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        
+        .guarantee-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--bull-green);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .guarantee-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .guarantee-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--bull-green);
+        }
+        
+        .guarantee-icon {
+            font-size: 2.5em;
+            color: var(--bull-green);
+            margin-bottom: 15px;
+        }
+        
+        .guarantee-card h5 {
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .guarantee-card p {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+        
+        /* Contact Terminal */
+        .contact {
+            background: var(--darker-bg);
+        }
+        
+        .contact-terminal {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 40px;
+            margin-top: 30px;
+            position: relative;
+        }
+        
+        .contact-terminal::before {
+            content: '> Contact Terminal';
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 0.9em;
+            color: var(--bull-green);
+        }
+        
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .contact-item {
+            text-align: center;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: rgba(25, 118, 210, 0.05);
+        }
+        
+        .contact-item i {
+            font-size: 2em;
+            color: var(--chart-blue);
+            margin-bottom: 15px;
+        }
+        
+        .contact-item h5 {
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .contact-item p {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--darker-bg);
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            padding: 40px 0;
+        }
+        
+        .footer p {
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                text-align: center;
+                padding: 80px 20px 40px;
+            }
+            
+            .hero-content {
+                flex-direction: column;
+            }
+            
+            .trading-logo {
+                order: -1;
+                margin-bottom: 30px;
+            }
+            
+            .logo-terminal {
+                max-width: 350px;
+            }
+            
+            .brand-main {
+                font-size: 1.8em;
+            }
+            
+            .terminal-stats {
+                flex-direction: column;
+                gap: 8px;
+                align-items: center;
+            }
+            
+            .stat-item {
+                display: inline-block;
+            }
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                text-align: center;
+            }
+            
+            .about-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .trading-stats {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .process-timeline::before {
+                left: 30px;
+            }
+            
+            .process-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .process-item:nth-child(even) {
+                flex-direction: column;
+            }
+            
+            .process-number {
+                position: relative;
+                left: auto;
+                transform: none;
+                margin-bottom: 20px;
+            }
+            
+            .process-content {
+                width: 100%;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.5em;
+            }
+            
+            .section-title {
+                font-size: 2em;
+            }
+            
+            .container {
+                padding: 0 20px;
+            }
+            
+            .trading-header {
+                flex-direction: column;
+                gap: 10px;
+                padding: 10px 15px;
+            }
+            
+            .logo-terminal {
+                max-width: 320px;
+            }
+            
+            .brand-main {
+                font-size: 1.6em;
+                letter-spacing: 1px;
+            }
+            
+            .terminal-body {
+                padding: 20px 15px;
+            }
+            
+            .terminal-stats {
+                flex-wrap: wrap;
+                gap: 6px;
+                justify-content: center;
+            }
+        }
+        
+        /* Animation Classes */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease;
+        }
+        
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Chart Animation */
+        .candlestick {
+            animation: candleGrow 2s ease-out;
+            animation-fill-mode: both;
+        }
+        
+        .candlestick:nth-child(1) { animation-delay: 0.1s; }
+        .candlestick:nth-child(2) { animation-delay: 0.2s; }
+        .candlestick:nth-child(3) { animation-delay: 0.3s; }
+        .candlestick:nth-child(4) { animation-delay: 0.4s; }
+        .candlestick:nth-child(5) { animation-delay: 0.5s; }
+        .candlestick:nth-child(6) { animation-delay: 0.6s; }
+        .candlestick:nth-child(7) { animation-delay: 0.7s; }
+        .candlestick:nth-child(8) { animation-delay: 0.8s; }
+        
+        @keyframes candleGrow {
+            from {
+                opacity: 0;
+                transform: scaleY(0);
+            }
+            to {
+                opacity: 1;
+                transform: scaleY(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Trading Terminal Header -->
+    <div class="trading-header">
+        <div class="market-status">
+            <div class="status-dot"></div>
+            <span>MARKETS OPEN</span>
+        </div>
+        <div class="lang-switcher">
+            <button class="lang-btn active" onclick="setLanguage('es')">ES</button>
+            <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <!-- Trading Logo -->
+                <div class="trading-logo">
+                    <div class="logo-terminal">
+                        <div class="terminal-header">
+                            <div class="terminal-dots">
+                                <span class="dot red"></span>
+                                <span class="dot yellow"></span>
+                                <span class="dot green"></span>
+                            </div>
+                            <div class="terminal-title">Trading Terminal</div>
+                        </div>
+                        <div class="terminal-body">
+                            <div class="code-line">
+                                <span class="prompt">$</span>
+                                <span class="command">metaquant</span>
+                                <span class="flag">--studio</span>
+                            </div>
+                            <div class="loading-dots">Loading system</div>
+                            <div class="brand-display">
+                                <div class="brand-main">METAQUANT</div>
+                                <div class="brand-sub">STUDIO</div>
+                            </div>
+                            <div class="terminal-stats">
+                                <span class="stat-item">MT4/MT5</span>
+                                <span class="stat-item">5+ YEARS</span>
+                                <span class="stat-item">200+ EAs</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Spanish Content -->
+                <div class="content" data-lang="es">
+                    <div class="company-badge">🏢 Empresa Especializada en Trading Algorítmico</div>
+                    <h1>🚀 Soluciones Profesionales MT4/MT5</h1>
+                    <p class="subtitle">Somos un estudio especializado que transforma ideas de trading en Expert Advisors, indicadores y sistemas automatizados de alta calidad para traders independientes, gestores de fondos e instituciones financieras</p>
+                    <a href="https://t.me/METAQUANTstudio" class="cta-trading" target="_blank">
+                        <i class="fab fa-telegram-plane"></i> ⚡ Solicitar Cotización
+                    </a>
+                </div>
+                
+                <!-- English Content -->
+                <div class="content" data-lang="en">
+                    <div class="company-badge">🏢 Specialized Company in Algorithmic Trading</div>
+                    <h1>🚀 Professional MT4/MT5 Solutions</h1>
+                    <p class="subtitle">We are a specialized studio that transforms trading ideas into high-quality Expert Advisors, indicators and automated systems for independent traders, fund managers and financial institutions</p>
+                    <a href="https://t.me/METAQUANTstudio" class="cta-trading" target="_blank">
+                        <i class="fab fa-telegram-plane"></i> ⚡ Get Quote
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Trading Chart Visual -->
+            <div class="chart-visual">
+                <div class="chart-header">
+                    <div class="chart-title">
+                      <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle; margin-right:8px;">
+                        <circle cx="19" cy="19" r="18" stroke="#1976d2" stroke-width="2" fill="#0d1421"/>
+                        <path d="M10 25L19 10L28 25" stroke="#00c851" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="19" cy="19" r="4" fill="#ffc107"/>
+                      </svg>
+                      METAQUANT STUDIO
+                    </div>
+                    <div class="chart-price">+15.47%</div>
+                </div>
+                <div class="chart-container">
+                    <div class="trend-line"></div>
+                    <div class="candlestick">
+                        <div class="wick-high"></div>
+                        <div class="body bullish"></div>
+                        <div class="wick-low"></div>
+                    </div>
+                    <div class="candlestick">
+                        <div class="wick-high"></div>
+                        <div class="body bearish"></div>
+                        <div class="wick-low"></div>
+                    </div>
+                    <div class="candlestick">
+                        <div class="wick-high"></div>
+                        <div class="body bullish"></div>
+                        <div class="wick-low"></div>
+                    </div>
+                    <div class="candlestick">
+                        <div class="wick-high"></div>
+                        <div class="body bullish"></div>
+                        <div class="wick-low"></div>
+                    </div>
+                    <div class="candlestick">
+                        <div class="wick-high"></div>
+                        <div class="body bullish"></div>
+                        <div class="wick-low"></div>
+                    </div>
+                    <div class="candlestick">
+                        <div class="wick-high"></div>
+                        <div class="body bearish"></div>
+                        <div class="wick-low"></div>
+                    </div>
+                    <div class="candlestick">
+                        <div class="wick-high"></div>
+                        <div class="body bullish"></div>
+                        <div class="wick-low"></div>
+                    </div>
+                    <div class="candlestick">
+                        <div class="wick-high"></div>
+                        <div class="body bullish"></div>
+                        <div class="wick-low"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about section" id="about">
+        <div class="container">
+            <!-- Spanish Content -->
+            <div class="content" data-lang="es">
+                <div class="section-header">
+                    <h2 class="section-title">👥 Quiénes Somos</h2>
+                    <p class="section-subtitle">Desarrolladores especializados en trading algorítmico con más de 5 años transformando estrategias en código rentable</p>
+                </div>
+                
+                <div class="about-grid fade-up">
+                    <div class="about-content">
+                        <h3>Experiencia en Mercados</h3>
+                        <p>En <strong>Metaquant Studio</strong> somos un equipo de desarrolladores y traders especializados en la creación de soluciones algorítmicas para MetaTrader 4 y MetaTrader 5. 🚀</p>
+                        <p>Nuestra empresa se dedica exclusivamente al desarrollo de herramientas de trading automatizado, combinando experiencia técnica profunda con conocimiento real de los mercados financieros. 💼</p>
+                        <p>Atendemos a todo el espectro del mercado: desde traders independientes que buscan automatizar sus estrategias personales, hasta gestores de fondos e instituciones financieras que requieren soluciones robustas y escalables para sus operaciones. 🌐</p>
+                    </div>
+                    <div class="about-visual">
+                        <span style="color:#fff;font-weight:500;font-size:1.05em;">Código MQL4/MQL5 Profesional</span>
+                        <div style="display: flex; gap: 15px; margin-top: 7px;">
+                            <div id="code-terminal" style="background: #1a2332; border: 1px solid #263238; border-radius: 8px; padding: 8px; font-family: 'Roboto Mono', monospace; font-size: 0.51em; color: #b0bec5; text-align: left; min-height: 119px; flex: 1;">
+                                <div id="code-content"></div>
+                                <div id="typing-cursor" style="display: inline-block; width: 2px; height: 1em; background: #00c851; animation: blink 1s infinite; margin-left: 2px;"></div>
+                            </div>
+                            <div id="profit-chart" style="background: #1a2332; border: 1px solid #263238; border-radius: 8px; padding: 8px; min-height: 119px; flex: 1; display: flex; align-items: center; justify-content: center; opacity: 1; transition: opacity 0.5s ease;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="trading-stats fade-up">
+                    <div class="stat-card">
+                        <span class="stat-number">5+</span>
+                        <div class="stat-label">🗓️ Años de Experiencia</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">200+</span>
+                        <div class="stat-label">✅ Proyectos Completados</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">24h</span>
+                        <div class="stat-label">⚡ Tiempo de Respuesta</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- English Content -->
+            <div class="content" data-lang="en">
+                <div class="section-header">
+                    <h2 class="section-title">👥 Who We Are</h2>
+                    <p class="section-subtitle">Developers specialized in algorithmic trading with over 5 years transforming strategies into profitable code</p>
+                </div>
+                
+                <div class="about-grid fade-up">
+                    <div class="about-content">
+                        <h3>Market Experience</h3>
+                        <p>At <strong>Metaquant Studio</strong>, we are a team of developers and traders specialized in creating algorithmic solutions for MetaTrader 4 and MetaTrader 5. 🚀</p>
+                        <p>Our company is exclusively dedicated to developing automated trading tools, combining deep technical expertise with real knowledge of financial markets. 💼</p>
+                        <p>We serve the entire market spectrum: from independent traders looking to automate their personal strategies, to fund managers and financial institutions requiring robust and scalable solutions for their operations. 🌐</p>
+                    </div>
+                    <div class="about-visual">
+                        <svg width="48" height="32" viewBox="0 0 48 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 4px;">
+                            <polyline points="2,30 12,18 22,24 32,8 46,14" fill="none" stroke="#00c851" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="12" cy="18" r="2.5" fill="#ffc107"/>
+                            <circle cx="32" cy="8" r="2.5" fill="#ffc107"/>
+                            <circle cx="46" cy="14" r="2.5" fill="#ffc107"/>
+                        </svg>
+                        <p style="color: #fff; font-weight: 500; font-size: 1.05em; margin: 0;">Código que genera profits</p>
+                    </div>
+                </div>
+                
+                <div class="trading-stats fade-up">
+                    <div class="stat-card">
+                        <span class="stat-number">5+</span>
+                        <div class="stat-label">🗓️ Years of Experience</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">200+</span>
+                        <div class="stat-label">✅ Completed Projects</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number">24h</span>
+                        <div class="stat-label">⚡ Response Time</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section class="services section" id="services">
+        <div class="container">
+            <!-- Spanish Content -->
+            <div class="content" data-lang="es">
+                <div class="section-header">
+                    <h2 class="section-title">🛠️ Servicios de Trading</h2>
+                    <p class="section-subtitle">Desarrollamos herramientas de trading automatizado que funcionan 24/7 en los mercados globales</p>
+                </div>
+                
+                <div class="services-terminal">
+                    <div class="service-panel fade-up">
+                        <div class="service-header">
+                            <div class="service-icon"><i class="fas fa-robot"></i></div>
+                            <div class="service-title">🤖 Expert Advisors (EAs)</div>
+                        </div>
+                        <div class="service-body">
+                            <div class="service-description">Desarrollamos robots de trading personalizados que ejecutan estrategias automáticamente. Desde sistemas simples hasta algoritmos complejos con múltiples timeframes y gestión avanzada de riesgo.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-panel fade-up">
+                        <div class="service-header">
+                            <div class="service-icon"><i class="fas fa-chart-area"></i></div>
+                            <div class="service-title">📊 Indicadores Personalizados</div>
+                        </div>
+                        <div class="service-body">
+                            <div class="service-description">Creamos indicadores únicos adaptados a cada estilo de trading. Visualización clara de señales, alertas automáticas y herramientas de análisis técnico avanzado.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-panel fade-up">
+                        <div class="service-header">
+                            <div class="service-icon"><i class="fas fa-terminal"></i></div>
+                            <div class="service-title">⚙️ Scripts y Herramientas</div>
+                        </div>
+                        <div class="service-body">
+                            <div class="service-description">Desarrollamos scripts para automatizar tareas específicas: gestión de órdenes, cálculo de lotes, paneles de control, scanners de mercado y herramientas de administración.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-panel fade-up">
+                        <div class="service-header">
+                            <div class="service-icon"><i class="fas fa-wrench"></i></div>
+                            <div class="service-title">🔧 Reparación y Optimización</div>
+                        </div>
+                        <div class="service-body">
+                            <div class="service-description">Nos especializamos en la corrección de errores en códigos existentes, optimización de rendimiento y actualización de EAs e indicadores para nuevas versiones de MetaTrader.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-panel fade-up">
+                        <div class="service-header">
+                            <div class="service-icon"><i class="fas fa-sync-alt"></i></div>
+                            <div class="service-title">🔄 Conversiones Entre Plataformas</div>
+                        </div>
+                        <div class="service-body">
+                            <div class="service-description">Realizamos migración de estrategias entre MT4 ↔ MT5, TradingView (PineScript), cTrader y otras plataformas. Adaptación completa manteniendo la lógica original y optimizando para cada entorno.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-panel fade-up">
+                        <div class="service-header">
+                            <div class="service-icon"><i class="fas fa-lock"></i></div>
+                            <div class="service-title">🔐 Protección y Licenciamiento</div>
+                        </div>
+                        <div class="service-body">
+                            <div class="service-description">Implementamos sistemas de protección para EAs: verificación de cuenta, límites de tiempo, encriptación de código y sistemas de licencias personalizados.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-panel fade-up">
+                        <div class="service-header">
+                            <div class="service-icon"><i class="fas fa-chart-pie"></i></div>
+                            <div class="service-title">📈 Desarrollo PineScript TradingView</div>
+                        </div>
+                        <div class="service-body">
+                            <div class="service-description">Creamos indicadores, estrategias y estudios personalizados en PineScript para TradingView. Desde alertas simples hasta sistemas complejos de backtesting y análisis técnico avanzado.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-panel fade-up">
+                        <div class="service-header">
+                            <div class="service-icon"><i class="fas fa-link"></i></div>
+                            <div class="service-title">🔗 Integración TradingView-MT4/MT5</div>
+                        </div>
+                        <div class="service-body">
+                            <div class="service-description">Desarrollamos aplicativos que convierten automáticamente las señales y alertas de TradingView en ejecuciones reales en MetaTrader 4/5 a través de email, webhook o API.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- English Content -->
+            <div class="content" data-lang="en">
+                <div class="section-header">
+                    <h2 class="section-title">🛠️ Trading Services</h2>
+                    <p class="section-subtitle">We develop automated trading tools that work 24/7 in global markets</p>
+                </div>
+                
+                <div class="services-terminal">
+                    <div class="service-panel fade-up">
+                        <div class="service-header">
+                            <div class="service-icon"><i class="fas fa-robot"></i></div>
+                            <div class="service-title">🤖 Expert Advisors (EAs)</div>
+                        </div>
+                        <div class="service-body">
+                            <div class="service-description">We develop custom trading robots that execute strategies automatically. From simple systems to complex algorithms with multiple timeframes and advanced risk management.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-panel fade-up">
+                        <div class="service-header">
+                            <div class="service-icon"><i class="fas fa-chart-area"></i></div>
+                            <div class="service-title">📊 Custom Indicators</div>
+                        </div>
+                        <div class="service-body">
+                            <div class="service-description">We create unique indicators adapted to each trading style. Clear signal visualization, automatic alerts and advanced technical analysis tools.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-panel fade-up">
+                        <div class="service-header">
+                            <div class="service-icon"><i class="fas fa-terminal"></i></div>
+                            <div class="service-title">⚙️ Scripts & Tools</div>
+                        </div>
+                        <div class="service-body">
+                            <div class="service-description">We develop scripts to automate specific tasks: order management, lot calculation, control panels, market scanners and administration tools.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-panel fade-up">
+                        <div class="service-header">
+                            <div class="service-icon"><i class="fas fa-wrench"></i></div>
+                            <div class="service-title">🔧 Repair & Optimization</div>
+                        </div>
+                        <div class="service-body">
+                            <div class="service-description">We specialize in error correction in existing code, performance optimization and updating EAs and indicators for new MetaTrader versions.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-panel fade-up">
+                        <div class="service-header">
+                            <div class="service-icon"><i class="fas fa-sync-alt"></i></div>
+                            <div class="service-title">🔄 Platform Conversions</div>
+                        </div>
+                        <div class="service-body">
+                            <div class="service-description">We perform strategy migration between MT4 ↔ MT5, TradingView (PineScript), cTrader and other platforms. Complete adaptation while maintaining original logic and optimizing for each environment.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-panel fade-up">
+                        <div class="service-header">
+                            <div class="service-icon"><i class="fas fa-lock"></i></div>
+                            <div class="service-title">🔐 Protection & Licensing</div>
+                        </div>
+                        <div class="service-body">
+                            <div class="service-description">We implement protection systems for EAs: account verification, time limits, code encryption and custom licensing systems.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-panel fade-up">
+                        <div class="service-header">
+                            <div class="service-icon"><i class="fas fa-chart-pie"></i></div>
+                            <div class="service-title">📈 PineScript TradingView Development</div>
+                        </div>
+                        <div class="service-body">
+                            <div class="service-description">We create custom indicators, strategies and studies in PineScript for TradingView. From simple alerts to complex backtesting systems and advanced technical analysis.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="service-panel fade-up">
+                        <div class="service-header">
+                            <div class="service-icon"><i class="fas fa-link"></i></div>
+                            <div class="service-title">🔗 TradingView-MT4/MT5 Integration</div>
+                        </div>
+                        <div class="service-body">
+                            <div class="service-description">We develop applications that automatically convert TradingView signals and alerts into real executions in MetaTrader 4/5 through email, webhook or API.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process -->
+    <section class="process section" id="process">
+        <div class="container">
+            <!-- Spanish Content -->
+            <div class="content" data-lang="es">
+                <div class="section-header">
+                    <h2 class="section-title">🔄 Proceso de Desarrollo</h2>
+                    <p class="section-subtitle">Metodología probada que garantiza EAs rentables y sistemas robustos</p>
+                </div>
+                
+                <div class="process-timeline">
+                    <div class="process-item fade-up">
+                        <div class="process-number">1</div>
+                        <div class="process-content">
+                            <h4>🔍 Análisis y Consultoría</h4>
+                            <p>Nuestro equipo evalúa su estrategia y define los requerimientos técnicos específicos para crear la solución ideal adaptada a sus necesidades.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="process-item fade-up">
+                        <div class="process-number">2</div>
+                        <div class="process-content">
+                            <h4>💻 Desarrollo Profesional</h4>
+                            <p>Programamos con código limpio, optimizado y bien documentado siguiendo las mejores prácticas de MQL4/MQL5 y estándares de la industria.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="process-item fade-up">
+                        <div class="process-number">3</div>
+                        <div class="process-content">
+                            <h4>🧪 Testing y Validación</h4>
+                            <p>Realizamos pruebas exhaustivas en diferentes condiciones de mercado para garantizar la estabilidad, confiabilidad y rendimiento del sistema.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="process-item fade-up">
+                        <div class="process-number">4</div>
+                        <div class="process-content">
+                            <h4>🚀 Entrega y Soporte</h4>
+                            <p>Entregamos archivos finales con documentación completa y proporcionamos soporte técnico post-implementación para garantizar el éxito.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- English Content -->
+            <div class="content" data-lang="en">
+                <div class="section-header">
+                    <h2 class="section-title">🔄 Development Process</h2>
+                    <p class="section-subtitle">Proven methodology that guarantees profitable EAs and robust systems</p>
+                </div>
+                
+                <div class="process-timeline">
+                    <div class="process-item fade-up">
+                        <div class="process-number">1</div>
+                        <div class="process-content">
+                            <h4>🔍 Analysis & Consulting</h4>
+                            <p>Our team evaluates your strategy and defines specific technical requirements to create the ideal solution adapted to your needs.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="process-item fade-up">
+                        <div class="process-number">2</div>
+                        <div class="process-content">
+                            <h4>💻 Professional Development</h4>
+                            <p>We program with clean, optimized and well-documented code following MQL4/MQL5 best practices and industry standards.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="process-item fade-up">
+                        <div class="process-number">3</div>
+                        <div class="process-content">
+                            <h4>🧪 Testing & Validation</h4>
+                            <p>We perform exhaustive testing under different market conditions to guarantee system stability, reliability and performance.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="process-item fade-up">
+                        <div class="process-number">4</div>
+                        <div class="process-content">
+                            <h4>🚀 Delivery & Support</h4>
+                            <p>We deliver final files with complete documentation and provide post-implementation technical support to guarantee success.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio -->
+    <section class="portfolio section" id="portfolio">
+        <div class="container">
+            <!-- Spanish Content -->
+            <div class="content" data-lang="es">
+                <div class="section-header">
+                    <h2 class="section-title">Sistemas en Producción</h2>
+                    <p class="section-subtitle">EAs y herramientas que generan resultados reales en cuentas live</p>
+                </div>
+                
+                <div class="portfolio-grid">
+                    <div class="project-terminal fade-up">
+                        <div class="project-display">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="project-info">
+                            <h4>Sistema de Breakout Institucional</h4>
+                            <p>EA avanzado que detecta rupturas de soportes y resistencias clave con gestión dinámica de stop loss y take profit basada en volatilidad para gestoras de fondos.</p>
+                            <div class="project-tags">
+                                <span class="project-tag">MT5</span>
+                                <span class="project-tag">Institucional</span>
+                                <span class="project-tag">Multi-Symbol</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-terminal fade-up">
+                        <div class="project-display">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div class="project-info">
+                            <h4>EA Personal de Scalping</h4>
+                            <p>Robot de trading personalizado para trader independiente que opera EUR/USD en M5. Incluye gestión de riesgo adaptativa y filtros de horario personalizable.</p>
+                            <div class="project-tags">
+                                <span class="project-tag">MT4</span>
+                                <span class="project-tag">Personal</span>
+                                <span class="project-tag">Scalping</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-terminal fade-up">
+                        <div class="project-display">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <div class="project-info">
+                            <h4>Suite de Gestión de Riesgo</h4>
+                            <p>Dashboard corporativo completo para gestión de riesgo con cálculo automático de lotes, control de drawdown, alertas de exposición y reportes ejecutivos.</p>
+                            <div class="project-tags">
+                                <span class="project-tag">Dashboard</span>
+                                <span class="project-tag">Risk Management</span>
+                                <span class="project-tag">Enterprise</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-terminal fade-up">
+                        <div class="project-display">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div class="project-info">
+                            <h4>Puente TradingView-MetaTrader</h4>
+                            <p>Aplicativo innovador que convierte automáticamente señales de TradingView enviadas por email en ejecuciones reales en MT4/MT5. Procesamiento inteligente de alertas con gestión de riesgo integrada.</p>
+                            <div class="project-tags">
+                                <span class="project-tag">TradingView</span>
+                                <span class="project-tag">Automatización</span>
+                                <span class="project-tag">Bridge</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- English Content -->
+            <div class="content" data-lang="en">
+                <div class="section-header">
+                    <h2 class="section-title">Production Systems</h2>
+                    <p class="section-subtitle">EAs and tools that generate real results in live accounts</p>
+                </div>
+                
+                <div class="portfolio-grid">
+                    <div class="project-terminal fade-up">
+                        <div class="project-display">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="project-info">
+                            <h4>Institutional Breakout System</h4>
+                            <p>Advanced EA that detects key support and resistance breakouts with dynamic stop loss and take profit management based on volatility for fund managers.</p>
+                            <div class="project-tags">
+                                <span class="project-tag">MT5</span>
+                                <span class="project-tag">Institutional</span>
+                                <span class="project-tag">Multi-Symbol</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-terminal fade-up">
+                        <div class="project-display">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="project-info">
+                            <h4>Personal Scalping EA</h4>
+                            <p>Custom trading robot for independent trader operating EUR/USD on M5. Includes adaptive risk management and customizable time filters.</p>
+                            <div class="project-tags">
+                                <span class="project-tag">MT4</span>
+                                <span class="project-tag">Personal</span>
+                                <span class="project-tag">Scalping</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-terminal fade-up">
+                        <div class="project-display">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <div class="project-info">
+                            <h4>Risk Management Suite</h4>
+                            <p>Complete corporate dashboard for risk management with automatic lot calculation, drawdown control, exposure alerts and executive reports.</p>
+                            <div class="project-tags">
+                                <span class="project-tag">Dashboard</span>
+                                <span class="project-tag">Risk Management</span>
+                                <span class="project-tag">Enterprise</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-terminal fade-up">
+                        <div class="project-display">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div class="project-info">
+                            <h4>TradingView-MetaTrader Bridge</h4>
+                            <p>Innovative application that automatically converts TradingView signals sent by email into real executions in MT4/MT5. Intelligent alert processing with integrated risk management.</p>
+                            <div class="project-tags">
+                                <span class="project-tag">TradingView</span>
+                                <span class="project-tag">Automation</span>
+                                <span class="project-tag">Bridge</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials section" id="testimonials">
+        <div class="container">
+            <!-- Spanish Content -->
+            <div class="content" data-lang="es">
+                <div class="section-header">
+                    <h2 class="section-title">💬 Testimonios de Traders</h2>
+                    <p class="section-subtitle">Resultados reales de clientes que han optimizado sus operaciones con nuestros sistemas</p>
+                </div>
+                
+                <div class="testimonials-grid">
+                    <div class="testimonial-card fade-up">
+                        <div class="testimonial-text">
+                            No soy experto en tecnología, pero me guiaron paso a paso. Ahora tengo un script que automatiza tareas que antes hacía manualmente. ¡Un cambio total para mi operativa!
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">MS</div>
+                            <div class="author-info">
+                                <h5>Marina S.</h5>
+                                <span>Swing Trader - Chile</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card fade-up">
+                        <div class="testimonial-text">
+                            Me gustó que entendieron rápido lo que necesitaba y me propusieron mejoras que no había considerado. El resultado superó mis expectativas.
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">AP</div>
+                            <div class="author-info">
+                                <h5>Andrés P.</h5>
+                                <span>Trader Algorítmico - Colombia</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card fade-up">
+                        <div class="testimonial-text">
+                            Ya había probado otros servicios antes y siempre me quedaba insatisfecho, o era muy caro o la calidad no era la esperada. Con Metaquant Studio por fin encontré un equipo que ofrece calidad profesional a un precio justo. ¡Muy contento con el resultado!
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">FL</div>
+                            <div class="author-info">
+                                <h5>Fernando L.</h5>
+                                <span>Trader de Futuros - Uruguay</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- English Content -->
+            <div class="content" data-lang="en">
+                <div class="section-header">
+                    <h2 class="section-title">💬 Trader Testimonials</h2>
+                    <p class="section-subtitle">Real results from clients who have optimized their operations with our systems</p>
+                </div>
+                
+                <div class="testimonials-grid">
+                    <div class="testimonial-card fade-up">
+                        <div class="testimonial-text">
+                            The Metaquant Studio team developed a scalping EA that worked perfectly from day one. Their code is very well structured and the optimizations they suggested significantly improved my performance. Exceptional professional work.
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">MR</div>
+                            <div class="author-info">
+                                <h5>Michael R.</h5>
+                                <span>Independent Trader - Spain</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="testimonial-card fade-up">
+                        <div class="testimonial-text">
+                            We had been struggling with a malfunctioning indicator for months in our fund management company. Metaquant Studio not only fixed it in record time, but added additional features we didn't even know we needed. Highly recommended.
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">AC</div>
+                            <div class="author-info">
+                                <h5>Andrea C.</h5>
+                                <span>Fund Manager - Mexico</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="testimonial-card fade-up">
+                        <div class="testimonial-text">
+                            As an independent trader, I needed to automate my personal strategy. Metaquant Studio perfectly understood my needs and created a solution that fits my budget. Excellent service for individual traders.
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">JL</div>
+                            <div class="author-info">
+                                <h5>Jorge L.</h5>
+                                <span>Independent Trader - Argentina</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Guarantees -->
+    <section class="guarantees section">
+        <div class="container">
+            <!-- Spanish Content -->
+            <div class="content" data-lang="es">
+                <div class="section-header">
+                    <h2 class="section-title">🔒 Garantías de Trading</h2>
+                    <p class="section-subtitle">Compromisos que respaldan la calidad de nuestros sistemas automatizados</p>
+                </div>
+                
+                <div class="guarantees-grid">
+                    <div class="guarantee-card fade-up">
+                        <div class="guarantee-icon"><i class="fas fa-clock"></i></div>
+                        <h5>⏰ Respuesta Garantizada 24h</h5>
+                        <p>Garantizamos respuesta profesional a su consulta en máximo 24 horas hábiles</p>
+                    </div>
+                    
+                    <div class="guarantee-card fade-up">
+                        <div class="guarantee-icon"><i class="fas fa-check-circle"></i></div>
+                        <h5>✅ Entrega Según Especificaciones</h5>
+                        <p>Todos nuestros proyectos se entregan completamente funcionales según las especificaciones acordadas</p>
+                    </div>
+                    
+                    <div class="guarantee-card fade-up">
+                        <div class="guarantee-icon"><i class="fas fa-file-code"></i></div>
+                        <h5>📄 Código Fuente Completo</h5>
+                        <p>Entregamos tanto archivos ejecutables como código fuente completo y documentación técnica</p>
+                    </div>
+                    
+                    <div class="guarantee-card fade-up">
+                        <div class="guarantee-icon"><i class="fas fa-headset"></i></div>
+                        <h5>🎧 Soporte Técnico Incluido</h5>
+                        <p>Soporte técnico post-entrega incluido para resolver consultas y realizar ajustes menores</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- English Content -->
+            <div class="content" data-lang="en">
+                <div class="section-header">
+                    <h2 class="section-title">🔒 Trading Guarantees</h2>
+                    <p class="section-subtitle">Commitments that support the quality of our automated systems</p>
+                </div>
+                
+                <div class="guarantees-grid">
+                    <div class="guarantee-card fade-up">
+                        <div class="guarantee-icon"><i class="fas fa-clock"></i></div>
+                        <h5>⏰ Guaranteed 24h Response</h5>
+                        <p>We guarantee professional response to your inquiry within maximum 24 business hours</p>
+                    </div>
+                    
+                    <div class="guarantee-card fade-up">
+                        <div class="guarantee-icon"><i class="fas fa-check-circle"></i></div>
+                        <h5>✅ Delivery Per Specifications</h5>
+                        <p>All our projects are delivered fully functional according to agreed specifications</p>
+                    </div>
+                    
+                    <div class="guarantee-card fade-up">
+                        <div class="guarantee-icon"><i class="fas fa-file-code"></i></div>
+                        <h5>📄 Complete Source Code</h5>
+                        <p>We deliver both executable files and complete source code with technical documentation</p>
+                    </div>
+                    
+                    <div class="guarantee-card fade-up">
+                        <div class="guarantee-icon"><i class="fas fa-headset"></i></div>
+                        <h5>🎧 Technical Support Included</h5>
+                        <p>Post-delivery technical support included to resolve queries and make minor adjustments</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="contact section" id="contact">
+        <div class="container">
+            <!-- Spanish Content -->
+            <div class="content" data-lang="es">
+                <div class="section-header">
+                    <h2 class="section-title">📞 Terminal de Contacto</h2>
+                    <p class="section-subtitle" style="color: var(--text-secondary);">Conéctese con nuestro equipo de desarrollo para automatizar su estrategia de trading</p>
+                </div>
+                
+                <div class="contact-terminal">
+                    <p style="font-size: 1.1em; margin-bottom: 30px; color: var(--text-secondary); text-align: center; margin-top: 30px;">
+                        Transforme sus ideas de trading en soluciones profesionales que funcionan 24/7, adaptadas tanto para traders independientes como para instituciones financieras 🌟
+                    </p>
+                    
+                    <div class="contact-grid">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <h5>Email</h5>
+                            <p>metaquantstudio01@gmail.com</p>
+                            <a href="https://mail.google.com/mail/?view=cm&to=metaquantstudio01@gmail.com" class="cta-trading" style="display:inline-block;margin-top:8px;font-size:0.98em;padding:8px 20px;" target="_blank">Enviar email</a>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <i class="fas fa-clock"></i>
+                            <h5>⏱️ Tiempo de Respuesta</h5>
+                            <p>Máximo 24 horas</p>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <i class="fas fa-calendar"></i>
+                            <h5>🗓️ Horario de Atención</h5>
+                            <p>Lunes a Viernes</p>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 40px;">
+                        <a href="https://t.me/METAQUANTstudio" class="cta-trading" target="_blank" style="font-size: 1.1em; padding: 16px 35px;">
+                            <i class="fab fa-telegram-plane"></i> ⚡ Solicitar Cotización Personalizada
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- English Content -->
+            <div class="content" data-lang="en">
+                <div class="section-header">
+                    <h2 class="section-title">📞 Contact Terminal</h2>
+                    <p class="section-subtitle" style="color: var(--text-secondary);">Connect with our development team to automate your trading strategy</p>
+                </div>
+                
+                <div class="contact-terminal">
+                    <p style="font-size: 1.1em; margin-bottom: 30px; color: var(--text-secondary); text-align: center; margin-top: 30px;">
+                        Transform your trading ideas into professional solutions that work 24/7, adapted for both independent traders and financial institutions 🌟
+                    </p>
+                    
+                    <div class="contact-grid">
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <h5>📧 Professional Email</h5>
+                            <p>info@metaquantstudio.com</p>
+                            <a href="https://mail.google.com/mail/?view=cm&to=info@metaquantstudio.com" class="cta-trading" style="display:inline-block;margin-top:8px;font-size:0.98em;padding:8px 20px;" target="_blank">Send email</a>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <i class="fas fa-clock"></i>
+                            <h5>⏱️ Response Time</h5>
+                            <p>Maximum 24 hours</p>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <i class="fas fa-calendar"></i>
+                            <h5>🗓️ Business Hours</h5>
+                            <p>Monday to Friday</p>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 40px;">
+                        <a href="https://t.me/METAQUANTstudio" class="cta-trading" target="_blank" style="font-size: 1.1em; padding: 16px 35px;">
+                            <i class="fab fa-telegram-plane"></i> ⚡ Get Custom Quote
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <!-- Spanish Content -->
+            <div class="content" data-lang="es">
+                <p>&copy; 2025 Metaquant Studio. Todos los derechos reservados. 🚀</p>
+                <p style="opacity: 0.7; font-size: 0.9em;">MetaTrader 4 y MetaTrader 5 son marcas registradas de MetaQuotes Software Corp. ⚡</p>
+            </div>
+
+            <!-- English Content -->
+            <div class="content" data-lang="en">
+                <p>&copy; 2025 Metaquant Studio. All rights reserved. 🚀</p>
+                <p style="opacity: 0.7; font-size: 0.9em;">MetaTrader 4 and MetaTrader 5 are registered trademarks of MetaQuotes Software Corp. ⚡</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Language Switching
+        function setLanguage(lang) {
+            // Update body class
+            document.body.className = lang === 'en' ? 'lang-en' : '';
+            
+            // Update language buttons
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update page title and meta
+            if (lang === 'en') {
+                document.title = 'Metaquant Studio | Specialized Company in MT4/MT5 Programming | Expert Advisors & Indicators';
+                document.querySelector('meta[name="description"]').content = 'Metaquant Studio - Specialized company in MT4/MT5 programming. Professional development of Expert Advisors, custom indicators, scripts and trading algorithms. +5 years in the market.';
+                document.querySelector('html').setAttribute('lang', 'en');
+            } else {
+                document.title = 'Metaquant Studio | Empresa Especializada en Programación MT4/MT5 | Expert Advisors e Indicadores';
+                document.querySelector('meta[name="description"]').content = 'Metaquant Studio - Empresa especializada en programación MT4/MT5. Desarrollo profesional de Expert Advisors, indicadores personalizados, scripts y algoritmos de trading. +5 años en el mercado.';
+                document.querySelector('html').setAttribute('lang', 'es');
+            }
+        }
+
+        // Animation Observer
+        const observerOptions = {
+            threshold: 0.05,
+            rootMargin: '50px 0px -20px 0px'
+        };
+        
+        // Preload observer for elements coming into view
+        const preloadObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Preload animation styles
+                    entry.target.style.willChange = 'transform, opacity';
+                }
+            });
+        }, {
+            threshold: 0,
+            rootMargin: '200px 0px 200px 0px'
+        });
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Remove delay for instant animation
+                    entry.target.style.transitionDelay = '0s';
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simulate terminal typing
+            setTimeout(simulateTerminalTyping, 500);
+            
+            // Show profit chart immediately
+            setTimeout(showProfitChart, 1000);
+            
+            // Simulate MQL4/MQL5 code typing
+            setTimeout(simulateCodeTyping, 3000);
+            
+            // Observe fade elements
+            const fadeElements = document.querySelectorAll('.fade-up');
+            fadeElements.forEach((el, index) => {
+                el.style.transitionDelay = `${index * 0.05}s`;
+                observer.observe(el);
+                preloadObserver.observe(el);
+            });
+
+            // Animate numbers
+            const statNumbers = document.querySelectorAll('.stat-number');
+            const statObserver = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateNumber(entry.target);
+                    }
+                });
+            }, { threshold: 0.2 });
+
+            statNumbers.forEach(num => statObserver.observe(num));
+
+            // Smooth scroll
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Update market time (simulated)
+            setInterval(updateMarketStatus, 30000);
+        });
+
+        // Simulate terminal typing effect
+        function simulateTerminalTyping() {
+            const commandElement = document.querySelector('.command');
+            const flagElement = document.querySelector('.flag');
+            const loadingDots = document.querySelector('.loading-dots');
+            const brandDisplay = document.querySelector('.brand-display');
+            const terminalStats = document.querySelector('.terminal-stats');
+            
+            if (!commandElement || !flagElement) return;
+            
+            const command = commandElement.textContent;
+            const flag = flagElement.textContent;
+            
+            commandElement.textContent = '';
+            flagElement.textContent = '';
+            brandDisplay.style.opacity = '0';
+            terminalStats.style.opacity = '0';
+            
+            // Type command
+            let i = 0;
+            const typeCommand = setInterval(() => {
+                commandElement.textContent += command[i];
+                i++;
+                if (i >= command.length) {
+                    clearInterval(typeCommand);
+                    // Type flag after command
+                    setTimeout(() => {
+                        let j = 0;
+                        const typeFlag = setInterval(() => {
+                            flagElement.textContent += flag[j];
+                            j++;
+                            if (j >= flag.length) {
+                                clearInterval(typeFlag);
+                                // Show loading dots
+                                setTimeout(() => {
+                                    loadingDots.classList.add('active');
+                                    setTimeout(() => {
+                                        loadingDots.classList.remove('active');
+                                        // Show brand and stats
+                                        brandDisplay.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                                        brandDisplay.style.opacity = '1';
+                                        brandDisplay.style.transform = 'translateY(0)';
+                                        setTimeout(() => {
+                                            terminalStats.style.transition = 'opacity 0.5s ease';
+                                            terminalStats.style.opacity = '1';
+                                        }, 300);
+                                    }, 2000);
+                                }, 500);
+                            }
+                        }, 50);
+                    }, 200);
+                }
+            }, 80);
+        }
+
+        // Simulate MQL4/MQL5 code typing
+        function simulateCodeTyping() {
+            const codeContent = document.getElementById('code-content');
+            const cursor = document.getElementById('typing-cursor');
+            const profitChart = document.getElementById('profit-chart');
+            
+            if (!codeContent) return;
+            
+            const codeLines = [
+                { text: '// Expert Advisor - Metaquant Studio', color: '#00c851', delay: 1000 },
+                { text: 'void OnTick() {', color: '#1976d2', delay: 500 },
+                { text: '    if(CheckSignal()) {', color: '#ffc107', delay: 300 },
+                { text: '        OpenPosition();', color: '#b0bec5', delay: 200 },
+                { text: '    }', color: '#ffc107', delay: 200 },
+                { text: '}', color: '#1976d2', delay: 200 },
+                { text: '', color: '#b0bec5', delay: 800 },
+                { text: '📈 Profit: +15.47%', color: '#00c851', delay: 300 },
+                { text: '⚡ Drawdown: 2.3%', color: '#00c851', delay: 300 },
+                { text: '🔄 Trades: 1,247', color: '#00c851', delay: 300 }
+            ];
+            
+            let currentLine = 0;
+            let currentChar = 0;
+            
+            function typeNextChar() {
+                if (currentLine >= codeLines.length) {
+                    // Animation complete, hide cursor
+                    cursor.style.display = 'none';
+                    return;
+                }
+                
+                const line = codeLines[currentLine];
+                
+                if (currentChar === 0) {
+                    // Start new line
+                    const lineElement = document.createElement('div');
+                    lineElement.style.color = line.color;
+                    lineElement.style.marginBottom = currentLine >= 7 ? '5px' : '8px';
+                    if (currentLine >= 7) {
+                        lineElement.style.borderTop = '1px solid #263238';
+                        lineElement.style.paddingTop = '10px';
+                        lineElement.style.fontSize = '0.9em';
+                    }
+                    codeContent.appendChild(lineElement);
+                }
+                
+                const currentLineElement = codeContent.children[currentLine];
+                
+                if (currentChar < line.text.length) {
+                    // Type next character
+                    currentLineElement.textContent += line.text[currentChar];
+                    currentChar++;
+                    setTimeout(typeNextChar, 50);
+                } else {
+                    // Line complete, move to next line
+                    currentLine++;
+                    currentChar = 0;
+                    setTimeout(typeNextChar, line.delay);
+                }
+            }
+            
+            // Start typing after a delay
+            setTimeout(typeNextChar, 2000);
+        }
+
+        // Show animated profit chart
+        function showProfitChart() {
+            const chart = document.getElementById('profit-chart');
+            if (!chart) return;
+            
+            // Show the chart
+            chart.style.opacity = '1';
+            
+            // Create profit chart data points
+            const profitData = [
+                { value: 0, label: 'Inicio' },
+                { value: 2.5, label: 'Mes 1' },
+                { value: 5.8, label: 'Mes 2' },
+                { value: 4.2, label: 'Mes 3' },
+                { value: 8.7, label: 'Mes 4' },
+                { value: 7.3, label: 'Mes 5' },
+                { value: 12.4, label: 'Mes 6' },
+                { value: 15.47, label: 'Actual' }
+            ];
+            
+            // Calculate chart dimensions
+            const maxValue = Math.max(...profitData.map(d => d.value));
+            const chartHeight = 100; // Available height for the chart
+            const chartWidth = 120; // Available width for the chart
+            const pointRadius = 3;
+            
+            // Create SVG container
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('width', '100%');
+            svg.setAttribute('height', '100%');
+            svg.setAttribute('viewBox', `0 0 ${chartWidth} ${chartHeight}`);
+            svg.style.overflow = 'visible';
+            
+            // Create profit line path
+            const points = profitData.map((data, index) => {
+                const x = (index / (profitData.length - 1)) * chartWidth;
+                const y = chartHeight - (data.value / maxValue) * chartHeight;
+                return `${x},${y}`;
+            }).join(' ');
+            
+            // Create the line path
+            const linePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            linePath.setAttribute('d', `M ${points.split(' ').join(' L ')}`);
+            linePath.setAttribute('stroke', '#00c851');
+            linePath.setAttribute('stroke-width', '2');
+            linePath.setAttribute('fill', 'none');
+            linePath.setAttribute('opacity', '0');
+            linePath.style.animation = 'lineDraw 1.5s ease-out 0.5s forwards';
+            
+            // Create gradient fill
+            const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+            const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+            gradient.setAttribute('id', 'profitGradient');
+            gradient.setAttribute('x1', '0%');
+            gradient.setAttribute('y1', '100%');
+            gradient.setAttribute('x2', '0%');
+            gradient.setAttribute('y2', '0%');
+            
+            const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+            stop1.setAttribute('offset', '0%');
+            stop1.setAttribute('stop-color', '#00c851');
+            stop1.setAttribute('stop-opacity', '0.3');
+            
+            const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+            stop2.setAttribute('offset', '100%');
+            stop2.setAttribute('stop-color', '#00c851');
+            stop2.setAttribute('stop-opacity', '0.1');
+            
+            gradient.appendChild(stop1);
+            gradient.appendChild(stop2);
+            defs.appendChild(gradient);
+            svg.appendChild(defs);
+            
+            // Create filled area
+            const fillPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            const fillPoints = points.split(' ').map(p => p.split(','));
+            const fillPathData = `M 0,${chartHeight} L ${fillPoints.map(p => p.join(',')).join(' L ')} L ${chartWidth},${chartHeight} Z`;
+            fillPath.setAttribute('d', fillPathData);
+            fillPath.setAttribute('fill', 'url(#profitGradient)');
+            fillPath.setAttribute('opacity', '0');
+            fillPath.style.animation = 'fillArea 1s ease-out 2s forwards';
+            
+            svg.appendChild(fillPath);
+            svg.appendChild(linePath);
+            
+            // Create data points
+            profitData.forEach((data, index) => {
+                const x = (index / (profitData.length - 1)) * chartWidth;
+                const y = chartHeight - (data.value / maxValue) * chartHeight;
+                
+                // Create point
+                const point = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                point.setAttribute('cx', x);
+                point.setAttribute('cy', y);
+                point.setAttribute('r', pointRadius);
+                point.setAttribute('fill', '#00c851');
+                point.setAttribute('stroke', '#1a2332');
+                point.setAttribute('stroke-width', '1');
+                point.setAttribute('opacity', '0');
+                point.style.animation = `pointAppear 0.3s ease-out ${2.5 + index * 0.1}s forwards`;
+                
+                // Create value label
+                const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                label.setAttribute('x', x);
+                label.setAttribute('y', y - 8);
+                label.setAttribute('text-anchor', 'middle');
+                label.setAttribute('fill', '#00c851');
+                label.setAttribute('font-size', '8');
+                label.setAttribute('font-family', 'Roboto Mono, monospace');
+                label.setAttribute('opacity', '0');
+                label.textContent = `+${data.value}%`;
+                label.style.animation = `labelAppear 0.3s ease-out ${2.5 + index * 0.1}s forwards`;
+                
+                svg.appendChild(point);
+                svg.appendChild(label);
+            });
+            
+            chart.appendChild(svg);
+            
+            // Add CSS animations if not already present
+            if (!document.querySelector('#profit-chart-styles')) {
+                const style = document.createElement('style');
+                style.id = 'profit-chart-styles';
+                style.textContent = `
+                    @keyframes lineDraw {
+                        from { opacity: 0; stroke-dasharray: 1000; stroke-dashoffset: 1000; }
+                        to { opacity: 1; stroke-dasharray: 1000; stroke-dashoffset: 0; }
+                    }
+                    @keyframes fillArea {
+                        from { opacity: 0; }
+                        to { opacity: 1; }
+                    }
+                    @keyframes pointAppear {
+                        from { opacity: 0; transform: scale(0); }
+                        to { opacity: 1; transform: scale(1); }
+                    }
+                    @keyframes labelAppear {
+                        from { opacity: 0; transform: translateY(5px); }
+                        to { opacity: 1; transform: translateY(0); }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        // Animate numbers
+        function animateNumber(element) {
+            const finalNumber = element.textContent;
+            const isPlus = finalNumber.includes('+');
+            const isH = finalNumber.includes('h');
+            let number = parseInt(finalNumber.replace(/[^0-9]/g, ''));
+            
+            let current = 0;
+            const steps = 40; // Más pasos para suavidad
+            const duration = 2000; // 2 segundos
+            let step = 0;
+            const timer = setInterval(() => {
+                step++;
+                // Ease-out cuadrático
+                const progress = step / steps;
+                const eased = 1 - Math.pow(1 - progress, 2);
+                current = Math.round(number * eased);
+                if (current > number) current = number;
+                element.textContent = current + (isPlus ? '+' : '') + (isH ? 'h' : '');
+                if (step >= steps) {
+                    element.textContent = number + (isPlus ? '+' : '') + (isH ? 'h' : '');
+                    clearInterval(timer);
+                }
+            }, duration / steps);
+        }
+
+        // Simulate market status
+        function updateMarketStatus() {
+            const statusText = document.querySelector('.market-status span');
+            const dot = document.querySelector('.status-dot');
+            
+            const hour = new Date().getHours();
+            if (hour >= 9 && hour <= 17) {
+                statusText.textContent = 'MARKETS OPEN';
+                dot.style.background = 'var(--bull-green)';
+            } else {
+                statusText.textContent = 'MARKETS CLOSED';
+                dot.style.background = 'var(--bear-red)';
+            }
+        }
+
+        // Initialize market status
+        updateMarketStatus();
+    </script>
+</body>
+</html>
